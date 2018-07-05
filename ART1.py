@@ -1,6 +1,5 @@
 import numpy as np
 
-
 MAX_ITEMS = 11
 MAX_CUSTOMERS = 10
 TOTAL_PROTOTYPE_VECTORS = 5
@@ -9,13 +8,13 @@ beta = 1.0
 vigilance = 0.9
 
 num_prototype_vectors = 0
-prototype_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS))
+prototype_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS), dtype=int)
 
-sum_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS))
+sum_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS), dtype=int)
 
-members = np.zeros(TOTAL_PROTOTYPE_VECTORS)
+members = np.zeros(TOTAL_PROTOTYPE_VECTORS, dtype=int)
 
-membership = np.ones(MAX_CUSTOMERS) * -1
+membership = np.ones(MAX_CUSTOMERS, dtype=int) * -1
 
 item_names = ['Hammer', 'Paper', 'Snickers', 'Screwdriver', 'Pen',
               'Kit-Kat', 'Wrench', 'Pencil', 'Heath-Bar', 'Tape-Measure', 'Binder']
@@ -33,21 +32,20 @@ database = np.array([[0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
 
 
 def perform_art1():
-    and_result = np.zeros(MAX_ITEMS)
     done = 0
     count = 50
+    global num_prototype_vectors
 
     while not done:
         done = 1
 
         for index in range(MAX_CUSTOMERS):
-
             for pvec in range(TOTAL_PROTOTYPE_VECTORS):
                 if members[pvec]:
-                    and_result = vector_bitwise_and(database[index][0], prototype_vector[pvec][0])
+                    and_result = vector_bitwise_and(database[index], prototype_vector[pvec])
                     mag_pe = vector_magnitude(and_result)
-                    mag_p = vector_magnitude(prototype_vector[pvec][0])
-                    mag_e = vector_magnitude(database[index][0])
+                    mag_p = vector_magnitude(prototype_vector[pvec])
+                    mag_e = vector_magnitude(database[index])
 
                     result = mag_pe / (beta + mag_p)
                     test = mag_e / (beta + MAX_ITEMS)
@@ -73,7 +71,7 @@ def perform_art1():
                                 pass
 
             if membership[index] == -1:
-                membership[index] = create_new_prototype_vector(database[index][0])
+                membership[index] = create_new_prototype_vector(database[index])
                 done = 0
 
         count -= 1
@@ -134,8 +132,8 @@ def create_new_prototype_vector(example):
 
     for i in range(MAX_ITEMS):
         prototype_vector[cluster][i] = example[i]
-        print('{}'.format(example[i]))
 
+    print(example)
     members[cluster] = 1
     print()
 
