@@ -34,7 +34,6 @@ database = np.array([[0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0],
 
 def perform_art1():
     and_result = np.zeros(MAX_ITEMS)
-    index = 0
     done = 0
     count = 50
 
@@ -88,7 +87,28 @@ def display_customer_database():
 
 
 def make_recommendation(customer):
-    pass
+    best_item = -1
+    val = 0
+
+    for item in range(MAX_ITEMS):
+        if database[customer][item] == 0 and sum_vector[membership[customer]][item] > val:
+            best_item = item
+            val = sum_vector[membership[customer]][item]
+
+    print('For customer {}'.format(customer))
+
+    if best_item >= 0:
+        print('The best recommendation id {} ({})'.format(best_item, item_names[best_item]))
+        print('Owned by {} out of {} members of this cluster'.format(sum_vector[membership[customer]][best_item],
+                                                                     members[membership[customer]]))
+    else:
+        print('No recommendation can be made.')
+
+    print('Already owns: ')
+    for item in range(MAX_ITEMS):
+        if database[customer][item]:
+            print('{} '.format(item_names[item]), end='')
+    print('\n')
 
 
 def vector_magnitude(vector):
@@ -149,3 +169,7 @@ def main():
     display_customer_database()
     for customer in range(MAX_CUSTOMERS):
         make_recommendation(customer)
+
+
+if __name__ == '__main__':
+    main()
