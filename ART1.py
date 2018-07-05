@@ -12,9 +12,9 @@ prototype_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS), dtype=in
 
 sum_vector = np.zeros(shape=(TOTAL_PROTOTYPE_VECTORS, MAX_ITEMS), dtype=int)
 
-members = np.zeros(TOTAL_PROTOTYPE_VECTORS, dtype=int)
+members = np.zeros(TOTAL_PROTOTYPE_VECTORS, dtype=int)  # count of customer in i cluster
 
-membership = np.ones(MAX_CUSTOMERS, dtype=int) * -1
+membership = np.ones(MAX_CUSTOMERS, dtype=int) * -1  # number of cluster for i customer
 
 item_names = ['Hammer', 'Paper', 'Snickers', 'Screwdriver', 'Pen',
               'Kit-Kat', 'Wrench', 'Pencil', 'Heath-Bar', 'Tape-Measure', 'Binder']
@@ -40,8 +40,14 @@ def perform_art1():
         done = 1
 
         for index in range(MAX_CUSTOMERS):
+            print('Customer {}'.format(index))
+            print(database[index])
+            print()
+
             for pvec in range(TOTAL_PROTOTYPE_VECTORS):
                 if members[pvec]:
+                    print('Prototype {}'.format(pvec))
+                    print(prototype_vector[pvec])
                     and_result = vector_bitwise_and(database[index], prototype_vector[pvec])
                     mag_pe = vector_magnitude(and_result)
                     mag_p = vector_magnitude(prototype_vector[pvec])
@@ -50,11 +56,16 @@ def perform_art1():
                     result = mag_pe / (beta + mag_p)
                     test = mag_e / (beta + MAX_ITEMS)
 
+                    print('Result = {}, test = {}'.format(result, test))
+
                     if result > test:
                         if (mag_pe / mag_e) < vigilance:
+                            print('{} < {}'.format((mag_pe / mag_e), vigilance))
                             if membership[index] != pvec:
                                 old = membership[index]
                                 membership[index] = pvec
+
+                                print('Membership {} to {}'.format(old, pvec))
 
                                 if old >= 0:
                                     members[old] -= 1
@@ -69,7 +80,7 @@ def perform_art1():
                                 break
                             else:
                                 pass
-
+                    print('-' * 20)
             if membership[index] == -1:
                 membership[index] = create_new_prototype_vector(database[index])
                 done = 0
@@ -164,10 +175,6 @@ def update_prototype_vector(cluster):
 
 def main():
     perform_art1()
-    display_customer_database()
-    for customer in range(MAX_CUSTOMERS):
-        make_recommendation(customer)
-
 
 if __name__ == '__main__':
     main()
